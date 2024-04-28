@@ -1,7 +1,5 @@
 import React from "react";
-import { Navbar } from "flowbite-react";
-import { TextInput } from "flowbite-react";
-import { Button } from "flowbite-react";
+import { Navbar, TextInput, Button } from "flowbite-react";
 import { Link, useLocation } from "react-router-dom";
 import { AiOutlineSearch } from "react-icons/ai";
 import { FaMoon } from "react-icons/fa";
@@ -34,8 +32,8 @@ export default function Header() {
         <Button className="w-12 h-10 hidden sm:inline" color="gray" pill>
           <FaMoon />
         </Button>
-        <Link to="/login">
-          <Button gradientDuoTone="purpleToBlue" outline>Login</Button>
+        <Link to="/signup">
+          <Button gradientDuoTone="purpleToBlue" outline>Sign in</Button>
         </Link>
         <Navbar.Toggle />
       </div>
