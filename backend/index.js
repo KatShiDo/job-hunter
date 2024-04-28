@@ -10,7 +10,7 @@ dotenv.config();
 
 mongoose
   .connect(process.env.MONGO)
-  .then(console.log("MongoDB is connected"))
+  .then(() => console.log("MongoDB is connected"))
   .catch((error) => console.log(error));
 
 app.listen(process.env.PORT, () => {

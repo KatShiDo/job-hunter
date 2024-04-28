@@ -29,5 +29,8 @@ dist-ssr
 *.sln
 *.sw?
 
+# For correct auto-import, no need for deployment
+jsconfig.json
+
 # Temporarily
 frontend-old
