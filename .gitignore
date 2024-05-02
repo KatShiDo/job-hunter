@@ -31,6 +31,3 @@ dist-ssr
 
 # For correct auto-import, no need for deployment
 jsconfig.json
-
-# Temporarily
-frontend-old
