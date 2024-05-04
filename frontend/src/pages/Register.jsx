@@ -3,9 +3,9 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Alert } from "flowbite-react";
 import {
-  signInStart,
-  signInSuccess,
-  signInFailure,
+  changeUserStart,
+  changeUserSuccess,
+  changeUserFailure,
 } from "../redux/slices/userSlice";
 import { useDispatch, useSelector } from "react-redux";
 import LogoLarge from "../components/LogoLarge";
@@ -27,22 +27,22 @@ export default function Register() {
   const handleSubmit = (event) => {
     event.preventDefault();
     if (!formData.username || !formData.email || !formData.password) {
-      return dispatch(signInFailure("Please fill out all fields"));
+      return dispatch(changeUserFailure("Please fill out all fields"));
     }
-    dispatch(signInStart());
+    dispatch(changeUserStart());
     axios
       .post("/api/auth/register", formData, { validateStatus: () => true })
       .then((response) => {
         if (response.status == 200) {
-          dispatch(signInSuccess(response.data));
+          dispatch(changeUserSuccess(response.data));
           navigate("/");
         } else {
-          return dispatch(signInFailure(response.data.message));
+          return dispatch(changeUserFailure(response.data.message));
         }
         return response.json();
       })
       .catch((error) => {
-        return dispatch(signInFailure(error.message));
+        return dispatch(changeUserFailure(error.message));
       });
   };
 

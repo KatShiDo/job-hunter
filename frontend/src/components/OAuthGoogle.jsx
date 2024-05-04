@@ -5,9 +5,9 @@ import { GoogleAuthProvider, signInWithPopup, getAuth } from "firebase/auth";
 import { app } from "../firebase";
 import { useDispatch } from "react-redux";
 import {
-  signInStart,
-  signInSuccess,
-  signInFailure,
+  changeUserStart,
+  changeUserSuccess,
+  changeUserFailure,
 } from "../redux/slices/userSlice";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -23,25 +23,24 @@ export default function OAuthGoogle() {
     });
     signInWithPopup(auth, provider)
       .then((googleResponse) => {
-        console.log(googleResponse);
         const userData = {
           username: googleResponse.user.displayName,
           email: googleResponse.user.email,
           avatar: googleResponse.user.photoURL,
         };
-        dispatch(signInStart());
+        dispatch(changeUserStart());
         axios
           .post("/api/auth/google", userData, { validateStatus: () => true })
           .then((apiResponse) => {
             if (apiResponse.status == 200) {
-              dispatch(signInSuccess(apiResponse.data));
+              dispatch(changeUserSuccess(apiResponse.data));
               return navigate("/");
             } else {
-              return dispatch(signInFailure(apiResponse.data.message));
+              return dispatch(changeUserFailure(apiResponse.data.message));
             }
           })
           .catch((error) => {
-            return dispatch(signInFailure(error));
+            return dispatch(changeUserFailure(error));
           });
       })
       .catch((error) => {
