@@ -108,3 +108,14 @@ export const google = (request, response, next) => {
       next(error);
     });
 };
+
+export const logout = (request, response, next) => {
+  try {
+    response
+      .clearCookie("refreshToken")
+      .status(200)
+      .send("User has been signed out");
+  } catch (error) {
+    next(error);
+  }
+};
