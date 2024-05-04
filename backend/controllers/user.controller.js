@@ -32,3 +32,18 @@ export const updateUser = (request, response, next) => {
     })
     .catch((error) => next(error));
 };
+
+export const deleteUser = (request, response, next) => {
+  if (request.user.id != request.params.userId) {
+    return next(
+      errorHandler(403, "You are not allowed to delete this account")
+    );
+  }
+  User.findByIdAndDelete(request.params.userId)
+    .then(() => {
+      response.status(200).send("User has been deleted");
+    })
+    .catch((error) => {
+      next(error);
+    });
+};
