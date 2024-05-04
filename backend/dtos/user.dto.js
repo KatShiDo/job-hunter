@@ -1,9 +1,8 @@
-export default class AuthDto {
+export default class UserDto {
   id;
   username;
   email;
   avatar;
-  accessToken;
   constructor(dbResponse) {
     this.id = dbResponse._id;
     this.username = dbResponse.username;

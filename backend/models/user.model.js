@@ -23,6 +23,12 @@ const userSchema = new mongoose.Schema(
       default:
         "https://catherineasquithgallery.com/uploads/posts/2021-03/1614570231_59-p-chernaya-golova-na-belom-fone-63.png",
     },
+    sessions: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "RefreshSession",
+      },
+    ],
   },
   { timestamps: true }
 );

@@ -1,25 +1,30 @@
 import mongoose from "mongoose";
 
 const refreshTokenSchema = new mongoose.Schema(
-    {
-      token: {
-        type: String,
-        required: true,
-        unique: true,
-      },
-      email: {
-        type: String,
-        required: true,
-        unique: true,
-      },
-      password: {
-        type: String,
-        required: true,
-      },
+  {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
     },
-    { timestamps: true }
-  );
-  
-  const RefreshToken = mongoose.model("RefreshToken", refreshTokenSchema);
-  
-  export default RefreshToken;
+    ua: {
+      type: String,
+      required: true,
+    },
+    fingerprint: {
+      type: String,
+      required: true,
+    },
+    ip: {
+      type: String,
+      required: true,
+    },
+    expiresIn: {
+      type: BigInt,
+      required: true
+    },
+  },
+);
+
+const RefreshToken = mongoose.model("RefreshToken", refreshTokenSchema);
+
+export default RefreshToken;

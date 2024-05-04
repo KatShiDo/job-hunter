@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 import AuthDto from "../dtos/auth.dto.js";
 
 const sendSignInSuccessResponse = (dbResponse, apiResponse) => {
-  const access_token = jwt.sign(
+  const accessToken = jwt.sign(
     {
       id: dbResponse._id,
     },
@@ -16,11 +16,11 @@ const sendSignInSuccessResponse = (dbResponse, apiResponse) => {
   );
 
   const authDto = new AuthDto(dbResponse);
-  authDto.access_token = access_token;
+  authDto.accessToken = accessToken;
 
   apiResponse
     .status(200)
-    .cookie("access_token", access_token, {
+    .cookie("refreshToken", accessToken, {
       httpOnly: true,
     })
     .send(authDto);
