@@ -79,9 +79,6 @@ export const login = (request, response, next) => {
 
 export const google = (request, response, next) => {
   const { username, email, avatar } = request.body;
-  console.log(username);
-  console.log(email);
-  console.log(avatar);
   User.findOne({ email })
     .then((validUser) => {
       if (validUser) {

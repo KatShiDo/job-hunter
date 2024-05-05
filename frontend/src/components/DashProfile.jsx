@@ -11,7 +11,7 @@ import {
   changeUserStart,
   changeUserSuccess,
   changeUserFailure,
-  deleteUserSuccess,
+  signoutSuccess,
 } from "../redux/slices/userSlice.js";
 import { app } from "../firebase";
 import { CircularProgressbar } from "react-circular-progressbar";
@@ -87,7 +87,27 @@ export default function DashProfile() {
       })
       .then((response) => {
         if (response.status == 200) {
-          dispatch(deleteUserSuccess());
+          dispatch(signoutSuccess());
+        } else {
+          return dispatch(changeUserFailure(response.data.message));
+        }
+      })
+      .catch((error) => {
+        dispatch(changeUserFailure(error.message));
+      });
+  };
+
+  const handleLogout = () => {
+    axios
+      .post("api/auth/logout", {
+        validateStatus: () => true,
+        headers: {
+          Authorization: "Bearer " + currentUser.accessToken,
+        },
+      })
+      .then((response) => {
+        if (response.status == 200) {
+          dispatch(signoutSuccess());
         } else {
           return dispatch(changeUserFailure(response.data.message));
         }
@@ -232,7 +252,9 @@ export default function DashProfile() {
         <span onClick={() => setShowModal(true)} className="cursor-pointer">
           Delete Account
         </span>
-        <span className="cursor-pointer">Sign Out</span>
+        <span onClick={handleLogout} className="cursor-pointer">
+          Sign Out
+        </span>
       </div>
       {updateUserSuccess && (
         <Alert color="success" className="mt-5">

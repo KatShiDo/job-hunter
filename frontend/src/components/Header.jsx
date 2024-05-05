@@ -6,12 +6,35 @@ import { FaMoon, FaSun } from "react-icons/fa";
 import Logo from "./Logo";
 import { useSelector, useDispatch } from "react-redux";
 import { toggleTheme } from "../redux/slices/themeSlice";
+import axios from "axios";
+import { signoutSuccess, changeUserFailure } from "../redux/slices/userSlice";
 
 export default function Header() {
   const { currentUser } = useSelector((state) => state.user);
   const { theme } = useSelector((state) => state.theme);
   const dispatch = useDispatch();
   const path = useLocation().pathname;
+
+  const handleLogout = () => {
+    axios
+      .post("api/auth/logout", {
+        validateStatus: () => true,
+        headers: {
+          Authorization: "Bearer " + currentUser.accessToken,
+        },
+      })
+      .then((response) => {
+        if (response.status == 200) {
+          dispatch(signoutSuccess());
+        } else {
+          return dispatch(changeUserFailure(response.data.message));
+        }
+      })
+      .catch((error) => {
+        dispatch(changeUserFailure(error.message));
+      });
+  };
+
   return (
     <Navbar className="border-b-2">
       <Logo />
@@ -51,7 +74,7 @@ export default function Header() {
               <Dropdown.Item>Profile</Dropdown.Item>
             </Link>
             <Dropdown.Divider />
-            <Dropdown.Item>Sign out</Dropdown.Item>
+            <Dropdown.Item onClick={handleLogout}>Sign out</Dropdown.Item>
           </Dropdown>
         ) : (
           <Link to="/signup">
