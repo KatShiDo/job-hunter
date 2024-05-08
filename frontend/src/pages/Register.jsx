@@ -1,10 +1,8 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { Link } from "react-router-dom";
 import { Alert } from "flowbite-react";
 import {
   changeUserStart,
-  changeUserSuccess,
   changeUserFailure,
 } from "../redux/slices/userSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,13 +10,15 @@ import LogoLarge from "../components/LogoLarge";
 import InputElement from "../components/InputElement";
 import SubmitButton from "../components/SubmitButton";
 import OAuthGoogle from "../components/OAuthGoogle";
+import register from "../components/utils/axios_requests/auth/register";
+import { useNavigate } from "react-router-dom";
 
 export default function Register() {
   const [formData, setFormData] = useState({});
   const { error: errorMessage } = useSelector((state) => state.user);
 
-  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleChange = (event) => {
     setFormData({ ...formData, [event.target.id]: event.target.value.trim() });
@@ -30,20 +30,7 @@ export default function Register() {
       return dispatch(changeUserFailure("Please fill out all fields"));
     }
     dispatch(changeUserStart());
-    axios
-      .post("/api/auth/register", formData, { validateStatus: () => true })
-      .then((response) => {
-        if (response.status == 200) {
-          dispatch(changeUserSuccess(response.data));
-          navigate("/");
-        } else {
-          return dispatch(changeUserFailure(response.data.message));
-        }
-        return response.json();
-      })
-      .catch((error) => {
-        return dispatch(changeUserFailure(error.message));
-      });
+    register(dispatch, navigate, formData);
   };
 
   return (

@@ -9,31 +9,35 @@ import {
 } from "firebase/storage";
 import {
   changeUserStart,
-  changeUserSuccess,
   changeUserFailure,
   signoutSuccess,
-} from "../redux/slices/userSlice.js";
-import { app } from "../firebase";
+  unsetSuccessMessage,
+} from "../../redux/slices/userSlice.js";
+import { app } from "../../firebase.js";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import axios from "axios";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
+import logout from "../utils/axios_requests/auth/logout";
+import updateUser from "../utils/axios_requests/users/updateUser";
+import deleteUser from "../utils/axios_requests/users/deleteUser";
 
 export default function DashProfile() {
   const dispatch = useDispatch();
-  const { currentUser, error } = useSelector((state) => state.user);
+  const { currentUser, accessToken, error, loading, success } = useSelector(
+    (state) => state.user
+  );
   const [imageFile, setImageFile] = useState(null);
   const [imageFileUrl, setImageFileUrl] = useState(null);
   const [imageFileUploadProgress, setImageFileUploadProgress] = useState(null);
   const [imageFileUploadError, setImageFileUploadError] = useState(null);
-  const [updateUserSuccess, setUpdateUserSuccess] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({});
   const filePickerRef = useRef();
 
   const handleChange = (event) => {
     setFormData({ ...formData, [event.target.id]: event.target.value.trim() });
-    setUpdateUserSuccess(null);
+    dispatch(unsetSuccessMessage());
   };
 
   const handleSubmit = (event) => {
@@ -42,24 +46,7 @@ export default function DashProfile() {
       return dispatch(changeUserFailure("No changes made"));
     }
     dispatch(changeUserStart());
-    axios
-      .put(`/api/users/${currentUser.id}`, formData, {
-        validateStatus: () => true,
-        headers: {
-          Authorization: "Bearer " + currentUser.accessToken,
-        },
-      })
-      .then((response) => {
-        if (response.status == 200) {
-          dispatch(changeUserSuccess(response.data));
-          setUpdateUserSuccess("User's profile updated successfully");
-        } else {
-          return dispatch(changeUserFailure(response.data.message));
-        }
-      })
-      .catch((error) => {
-        return dispatch(changeUserFailure(error.message));
-      });
+    updateUser(dispatch, currentUser, accessToken, formData);
   };
 
   const handleImageChange = (event) => {
@@ -69,6 +56,7 @@ export default function DashProfile() {
       setImageFileUrl(URL.createObjectURL(file));
     }
   };
+  
   useEffect(() => {
     if (imageFile) {
       uploadImage();
@@ -78,48 +66,16 @@ export default function DashProfile() {
   const handleDeleteUser = () => {
     setShowModal(false);
     dispatch(changeUserStart());
-    axios
-      .delete(`/api/users/${currentUser.id}`, {
-        validateStatus: () => true,
-        headers: {
-          Authorization: "Bearer " + currentUser.accessToken,
-        },
-      })
-      .then((response) => {
-        if (response.status == 200) {
-          dispatch(signoutSuccess());
-        } else {
-          return dispatch(changeUserFailure(response.data.message));
-        }
-      })
-      .catch((error) => {
-        dispatch(changeUserFailure(error.message));
-      });
+    deleteUser(dispatch, currentUser, accessToken);
   };
 
   const handleLogout = () => {
-    axios
-      .post("api/auth/logout", {
-        validateStatus: () => true,
-        headers: {
-          Authorization: "Bearer " + currentUser.accessToken,
-        },
-      })
-      .then((response) => {
-        if (response.status == 200) {
-          dispatch(signoutSuccess());
-        } else {
-          return dispatch(changeUserFailure(response.data.message));
-        }
-      })
-      .catch((error) => {
-        dispatch(changeUserFailure(error.message));
-      });
+    logout();
   };
 
   const uploadImage = () => {
     setImageFileUploadError(null);
-    setUpdateUserSuccess(null);
+    dispatch(unsetSuccessMessage());
     const storage = getStorage(app);
     const fileName = new Date().getTime() + imageFile.name;
     const storageRef = ref(storage, fileName);
@@ -131,33 +87,10 @@ export default function DashProfile() {
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         setImageFileUploadProgress(progress.toFixed(0));
         if (progress == 100) {
-          axios
-            .put(
-              `/api/users/${currentUser.id}`,
-              {
-                avatar: imageFileUrl,
-              },
-              {
-                validateStatus: () => true,
-                headers: {
-                  Authorization: "Bearer " + currentUser.accessToken,
-                },
-              }
-            )
-            .then((response) => {
-              if (response.status == 200) {
-                dispatch(changeUserSuccess(response.data));
-                setUpdateUserSuccess("User's avatar updated successfully");
-              } else {
-                return dispatch(changeUserFailure(response.data.message));
-              }
-            })
-            .catch((error) => {
-              return dispatch(changeUserFailure(error.message));
-            });
+          updateUser(dispatch, currentUser, accessToken, { avatar: imageFileUrl });
         }
       },
-      (error) => {
+      () => {
         setImageFileUploadError(
           "Could not upload image (File must be less than 2MB)"
         );
@@ -168,7 +101,6 @@ export default function DashProfile() {
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
           setImageFileUrl(downloadURL);
-          //   setFormData({ ...formData, avatar: downloadURL });
         });
       }
     );
@@ -244,8 +176,13 @@ export default function DashProfile() {
           placeholder="Password"
           onChange={handleChange}
         />
-        <Button type="submit" gradientDuoTone="purpleToBlue" outline>
-          Update
+        <Button
+          type="submit"
+          gradientDuoTone="purpleToBlue"
+          outline
+          disabled={loading}
+        >
+          {loading ? "Loading..." : "Update"}
         </Button>
       </form>
       <div className="text-red-500 flex justify-between mt-5">
@@ -256,9 +193,9 @@ export default function DashProfile() {
           Sign Out
         </span>
       </div>
-      {updateUserSuccess && (
+      {success && (
         <Alert color="success" className="mt-5">
-          {updateUserSuccess}
+          {success}
         </Alert>
       )}
       {error && (

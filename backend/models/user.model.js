@@ -29,6 +29,10 @@ const userSchema = new mongoose.Schema(
         ref: "RefreshSession",
       },
     ],
+    isAdmin: {
+      type: Boolean,
+      default: false,
+    }
   },
   { timestamps: true }
 );

@@ -3,10 +3,12 @@ export default class UserDto {
   username;
   email;
   avatar;
+  isAdmin;
   constructor(dbResponse) {
     this.id = dbResponse._id;
     this.username = dbResponse.username;
     this.email = dbResponse.email;
     this.avatar = dbResponse.avatar;
+    this.isAdmin = dbResponse.isAdmin;
   }
 }

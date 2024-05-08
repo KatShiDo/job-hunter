@@ -1,17 +1,17 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Alert } from "flowbite-react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   changeUserStart,
-  changeUserSuccess,
   changeUserFailure,
 } from "../redux/slices/userSlice";
-import axios from "axios";
 import LogoLarge from "../components/LogoLarge";
 import InputElement from "../components/InputElement";
 import SubmitButton from "../components/SubmitButton";
 import OAuthGoogle from "../components/OAuthGoogle";
+import login from "../components/utils/axios_requests/auth/login";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const [formData, setFormData] = useState({ username: null, password: null });
@@ -30,19 +30,7 @@ export default function Login() {
       return dispatch(changeUserFailure("Please fill out all fields"));
     }
     dispatch(changeUserStart());
-    axios
-      .post("/api/auth/login", formData, { validateStatus: () => true })
-      .then((response) => {
-        if (response.status == 200) {
-          dispatch(changeUserSuccess(response.data));
-          return navigate("/");
-        } else {
-          return dispatch(changeUserFailure(response.data.message));
-        }
-      })
-      .catch((error) => {
-        return dispatch(changeUserFailure(error.message));
-      });
+    login(dispatch, navigate, formData);
   };
 
   return (

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Navbar, TextInput, Button, Dropdown, Avatar } from "flowbite-react";
 import { Link, useLocation } from "react-router-dom";
 import { AiOutlineSearch } from "react-icons/ai";
@@ -6,33 +6,19 @@ import { FaMoon, FaSun } from "react-icons/fa";
 import Logo from "./Logo";
 import { useSelector, useDispatch } from "react-redux";
 import { toggleTheme } from "../redux/slices/themeSlice";
-import axios from "axios";
-import { signoutSuccess, changeUserFailure } from "../redux/slices/userSlice";
+import refresh from "./utils/axios_requests/auth/refresh";
+import logout from "./utils/axios_requests/auth/logout";
 
 export default function Header() {
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser, accessToken } = useSelector((state) => state.user);
   const { theme } = useSelector((state) => state.theme);
   const dispatch = useDispatch();
   const path = useLocation().pathname;
 
+  
+
   const handleLogout = () => {
-    axios
-      .post("api/auth/logout", {
-        validateStatus: () => true,
-        headers: {
-          Authorization: "Bearer " + currentUser.accessToken,
-        },
-      })
-      .then((response) => {
-        if (response.status == 200) {
-          dispatch(signoutSuccess());
-        } else {
-          return dispatch(changeUserFailure(response.data.message));
-        }
-      })
-      .catch((error) => {
-        dispatch(changeUserFailure(error.message));
-      });
+    logout(dispatch, accessToken);
   };
 
   return (

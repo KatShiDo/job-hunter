@@ -12,6 +12,7 @@ export const verifyToken = (request, response, next) => {
     if (error) {
       return next(errorHandler(401, "Unauthorized"));
     }
+    // console.log("DECODED", decoded);
     request.user = decoded;
     next();
   });

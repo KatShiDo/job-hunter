@@ -4,48 +4,35 @@ import { AiFillGoogleCircle } from "react-icons/ai";
 import { GoogleAuthProvider, signInWithPopup, getAuth } from "firebase/auth";
 import { app } from "../firebase";
 import { useDispatch } from "react-redux";
-import {
-  changeUserStart,
-  changeUserSuccess,
-  changeUserFailure,
-} from "../redux/slices/userSlice";
+import { changeUserStart, changeUserFailure } from "../redux/slices/userSlice";
+import { getFingerprint } from "./utils/getFingerprint.js";
+import google from "./utils/axios_requests/auth/google";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 
 export default function OAuthGoogle() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const auth = getAuth(app);
-  const handleClick = () => {
+  const handleClick = async () => {
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({
       prompt: "select_account",
     });
-    signInWithPopup(auth, provider)
-      .then((googleResponse) => {
-        const userData = {
-          username: googleResponse.user.displayName,
-          email: googleResponse.user.email,
-          avatar: googleResponse.user.photoURL,
-        };
-        dispatch(changeUserStart());
-        axios
-          .post("/api/auth/google", userData, { validateStatus: () => true })
-          .then((apiResponse) => {
-            if (apiResponse.status == 200) {
-              dispatch(changeUserSuccess(apiResponse.data));
-              return navigate("/");
-            } else {
-              return dispatch(changeUserFailure(apiResponse.data.message));
-            }
-          })
-          .catch((error) => {
-            return dispatch(changeUserFailure(error));
-          });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    try {
+      const googleResponse = await signInWithPopup(auth, provider);
+      const fingerprint = await getFingerprint();
+      const userData = {
+        username: googleResponse.user.displayName,
+        email: googleResponse.user.email,
+        avatar: googleResponse.user.photoURL,
+        fingerprint: fingerprint,
+      };
+      console.log(userData);
+      dispatch(changeUserStart());
+      google(dispatch, navigate, userData);
+    } catch (error) {
+      dispatch(changeUserFailure(error.message));
+    }
   };
   return (
     <Button

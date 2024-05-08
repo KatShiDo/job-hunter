@@ -8,6 +8,8 @@ export const getUsers = (request, response) => {
 };
 
 export const updateUser = (request, response, next) => {
+  // console.log(request.user);
+  // console.log(request.params.userId);
   if (request.user.id != request.params.userId) {
     return next(errorHandler(403, "You are not allowed to update this user"));
   }
