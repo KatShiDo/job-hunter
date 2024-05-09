@@ -3,9 +3,11 @@ import React, { useState, useEffect } from "react";
 import { HiArrowSmRight, HiUser } from "react-icons/hi";
 import { Link, useLocation } from "react-router-dom";
 import logout from "../utils/axios_requests/auth/logout";
+import { useDispatch } from "react-redux";
 
 export default function DashSidebar() {
   const location = useLocation();
+  const dispatch = useDispatch();
   const [tab, setTab] = useState("");
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -16,7 +18,7 @@ export default function DashSidebar() {
   }, [location.search]);
 
   const handleLogout = () => {
-    logout();
+    logout(dispatch);
   };
 
   return (

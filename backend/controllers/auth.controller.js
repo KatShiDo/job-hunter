@@ -159,8 +159,12 @@ export const refresh = (request, response, next) => {
   }
   RefreshToken.findByIdAndDelete(refreshTokenId)
     .then((oldRefreshTokenResponse) => {
-      // console.log("DELETED", oldRefreshTokenResponse);
+      console.log("DELETED", oldRefreshTokenResponse);
+      if (oldRefreshTokenResponse.expirationDate < Date.now()) {
+        return next(errorHandler(401, "Refresh token is expired"))
+      }
       const newRefreshToken = new RefreshToken({
+        _id: oldRefreshTokenResponse._id,
         userId: oldRefreshTokenResponse.userId,
         fingerprint: oldRefreshTokenResponse.fingerprint,
       });

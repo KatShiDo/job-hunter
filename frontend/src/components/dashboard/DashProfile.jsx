@@ -10,13 +10,11 @@ import {
 import {
   changeUserStart,
   changeUserFailure,
-  signoutSuccess,
   unsetSuccessMessage,
 } from "../../redux/slices/userSlice.js";
 import { app } from "../../firebase.js";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import axios from "axios";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 import logout from "../utils/axios_requests/auth/logout";
 import updateUser from "../utils/axios_requests/users/updateUser";

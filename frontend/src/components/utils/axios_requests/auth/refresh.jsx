@@ -10,19 +10,23 @@ export default function refresh(dispatch) {
       validateStatus: () => true,
     })
     .then((response) => {
-      dispatch(changeAccessToken(response.data));
-      axios
-        .get("/api/auth/jwt-auth", {
-          validateStatus: () => true,
-          headers: {
-            Authorization: "Bearer " + response.data.accessToken,
-          },
-        })
-        .then((userResponse) => {
-          dispatch(updateUserSuccess(userResponse.data));
-        });
+      if (response.status == 200) {
+        dispatch(changeAccessToken(response.data));
+        axios
+          .get("/api/auth/jwt-auth", {
+            validateStatus: () => true,
+            headers: {
+              Authorization: "Bearer " + response.data.accessToken,
+            },
+          })
+          .then((userResponse) => {
+            dispatch(updateUserSuccess(userResponse.data));
+          });
+      } else {
+        console.log(response.message);
+      }
     })
     .catch((error) => {
       console.log(error);
     });
-};
+}

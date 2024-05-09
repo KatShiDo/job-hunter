@@ -3,8 +3,13 @@ import {
   signoutSuccess,
   changeUserFailure,
 } from "../../../../redux/slices/userSlice";
+import { isExpired } from "./checkAccessToken";
+import refresh from "./refresh";
 
 export default function logout(dispatch, accessToken) {
+  if (isExpired(accessToken)) {
+    refresh(dispatch);
+  }
   axios
     .post("api/auth/logout", {
       validateStatus: () => true,
@@ -22,4 +27,4 @@ export default function logout(dispatch, accessToken) {
     .catch((error) => {
       dispatch(changeUserFailure(error.message));
     });
-};
+}

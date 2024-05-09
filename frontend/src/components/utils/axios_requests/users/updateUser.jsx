@@ -4,8 +4,13 @@ import {
   authUserSuccess,
   setSuccessMessage,
 } from "../../../../redux/slices/userSlice";
+import { isExpired } from "../auth/checkAccessToken";
+import refresh from "../auth/refresh";
 
 export default function updateUser(dispatch, currentUser, accessToken, formData) {
+  if (isExpired(accessToken)) {
+    refresh(dispatch);
+  }
   axios
     .put(`/api/users/${currentUser.id}`, formData, {
       validateStatus: () => true,
