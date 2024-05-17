@@ -7,7 +7,7 @@ export const create = (request, response, next) => {
   if (!name || name == "") {
     return next(errorHandler(400, "Please provide all required fields"));
   }
-  if (!image) {
+  if (!image || image == "") {
     image = "https://csko38.ru/wp-content/uploads/2023/10/7.png";
   }
   const newCompany = new Company({
