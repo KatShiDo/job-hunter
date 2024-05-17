@@ -1,6 +1,7 @@
 import axios from "axios";
 import {
   changeAccessToken,
+  unsetSuccessMessage,
   updateUserSuccess,
 } from "../../../../redux/slices/userSlice";
 
@@ -21,6 +22,7 @@ export default function refresh(dispatch) {
           })
           .then((userResponse) => {
             dispatch(updateUserSuccess(userResponse.data));
+            dispatch(unsetSuccessMessage());
           });
       } else {
         console.log(response.message);

@@ -72,11 +72,13 @@ export default function Header() {
         <Navbar.Toggle />
       </div>
       <Navbar.Collapse>
-        <Navbar.Link active={path === "/about"} as={"div"}>
+        <Navbar.Link active={path === "/about"} as="div">
           <Link to="/about">About</Link>
         </Navbar.Link>
-        <Navbar.Link active={path === "/cvs"} as={"div"}>
-          <Link to="/cvs">My CVs</Link>
+        <Navbar.Link active={path === currentUser.company ? "/company" : "/cvs"} as="div">
+          <Link to={currentUser.company ? "/company" : "/cvs"}>
+            {currentUser.company ? "My Company" : "My CVs"}
+          </Link>
         </Navbar.Link>
       </Navbar.Collapse>
     </Navbar>

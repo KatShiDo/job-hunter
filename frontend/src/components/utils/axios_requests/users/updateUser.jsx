@@ -1,8 +1,8 @@
 import axios from "axios";
 import {
   changeUserFailure,
-  authUserSuccess,
   setSuccessMessage,
+  updateUserSuccess,
 } from "../../../../redux/slices/userSlice";
 import { isExpired } from "../auth/checkAccessToken";
 import refresh from "../auth/refresh";
@@ -20,7 +20,7 @@ export default function updateUser(dispatch, currentUser, accessToken, formData)
     })
     .then((response) => {
       if (response.status == 200) {
-        dispatch(authUserSuccess(response.data));
+        dispatch(updateUserSuccess(response.data));
         dispatch(setSuccessMessage("User's profile updated successfully"));
       } else {
         return dispatch(changeUserFailure(response.data.message));

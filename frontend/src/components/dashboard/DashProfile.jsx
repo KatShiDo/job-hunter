@@ -19,6 +19,7 @@ import { HiOutlineExclamationCircle } from "react-icons/hi";
 import logout from "../utils/axios_requests/auth/logout";
 import updateUser from "../utils/axios_requests/users/updateUser";
 import deleteUser from "../utils/axios_requests/users/deleteUser";
+import { Link } from "react-router-dom";
 
 export default function DashProfile() {
   const dispatch = useDispatch();
@@ -54,7 +55,7 @@ export default function DashProfile() {
       setImageFileUrl(URL.createObjectURL(file));
     }
   };
-  
+
   useEffect(() => {
     if (imageFile) {
       uploadImage();
@@ -66,11 +67,7 @@ export default function DashProfile() {
     dispatch(changeUserStart());
     deleteUser(dispatch, currentUser, accessToken);
   };
-
-  const handleLogout = () => {
-    logout();
-  };
-
+  
   const uploadImage = () => {
     setImageFileUploadError(null);
     dispatch(unsetSuccessMessage());
@@ -84,9 +81,6 @@ export default function DashProfile() {
         const progress =
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         setImageFileUploadProgress(progress.toFixed(0));
-        if (progress == 100) {
-          updateUser(dispatch, currentUser, accessToken, { avatar: imageFileUrl });
-        }
       },
       () => {
         setImageFileUploadError(
@@ -98,7 +92,9 @@ export default function DashProfile() {
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          setImageFileUrl(downloadURL);
+          updateUser(dispatch, currentUser, accessToken, {
+            avatar: downloadURL,
+          });
         });
       }
     );
@@ -187,8 +183,8 @@ export default function DashProfile() {
         <span onClick={() => setShowModal(true)} className="cursor-pointer">
           Delete Account
         </span>
-        <span onClick={handleLogout} className="cursor-pointer">
-          Sign Out
+        <span className="cursor-pointer">
+          <Link to="/company/create">I own a company</Link>
         </span>
       </div>
       {success && (

@@ -15,10 +15,14 @@ import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const [formData, setFormData] = useState({ username: null, password: null });
-  const { error: errorMessage } = useSelector((state) => state.user);
+  const { error: errorMessage, currentUser } = useSelector((state) => state.user);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  if (currentUser) {
+    navigate("/");
+  }
 
   const handleChange = (event) => {
     setFormData({ ...formData, [event.target.id]: event.target.value.trim() });
