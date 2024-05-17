@@ -24,7 +24,9 @@ const updateRefreshToken = async (userId, fingerprint, next) => {
 };
 
 const sendAuthSuccessResponse = (dbResponse, apiResponse, next) => {
+  console.log("DBRESPONSE", dbResponse);
   const userDto = new UserDto(dbResponse);
+  console.log("USERDTO", userDto);
   apiResponse.status(200).send(userDto);
 };
 
@@ -97,6 +99,7 @@ export const login = (request, response, next) => {
   }
 
   User.findOne({ username })
+    .populate("companyId")
     .then((validUser) => {
       if (!validUser) {
         return next(errorHandler(404, "User not found"));
@@ -115,6 +118,7 @@ export const login = (request, response, next) => {
 export const google = (request, response, next) => {
   const { username, email, avatar, fingerprint } = request.body;
   User.findOne({ email })
+    .populate("companyId")
     .then((validUser) => {
       if (validUser) {
         sendSignInSuccessResponse(validUser, response, fingerprint, next);
@@ -159,9 +163,9 @@ export const refresh = (request, response, next) => {
   }
   RefreshToken.findByIdAndDelete(refreshTokenId)
     .then((oldRefreshTokenResponse) => {
-      console.log("DELETED", oldRefreshTokenResponse);
+      // console.log("DELETED", oldRefreshTokenResponse);
       if (oldRefreshTokenResponse.expirationDate < Date.now()) {
-        return next(errorHandler(401, "Refresh token is expired"))
+        return next(errorHandler(401, "Refresh token is expired"));
       }
       const newRefreshToken = new RefreshToken({
         _id: oldRefreshTokenResponse._id,
@@ -200,7 +204,9 @@ export const refresh = (request, response, next) => {
 
 export const jwtAuth = (request, response, next) => {
   User.findById(request.user.id)
+    .populate("companyId")
     .then((dbResponse) => {
+      console.log(dbResponse);
       sendAuthSuccessResponse(dbResponse, response, next);
     })
     .catch((error) => {

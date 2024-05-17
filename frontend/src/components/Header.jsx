@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Navbar, TextInput, Button, Dropdown, Avatar } from "flowbite-react";
 import { Link, useLocation } from "react-router-dom";
 import { AiOutlineSearch } from "react-icons/ai";
@@ -6,7 +6,6 @@ import { FaMoon, FaSun } from "react-icons/fa";
 import Logo from "./Logo";
 import { useSelector, useDispatch } from "react-redux";
 import { toggleTheme } from "../redux/slices/themeSlice";
-import refresh from "./utils/axios_requests/auth/refresh";
 import logout from "./utils/axios_requests/auth/logout";
 
 export default function Header() {
@@ -14,8 +13,6 @@ export default function Header() {
   const { theme } = useSelector((state) => state.theme);
   const dispatch = useDispatch();
   const path = useLocation().pathname;
-
-  
 
   const handleLogout = () => {
     logout(dispatch, accessToken);
@@ -72,14 +69,18 @@ export default function Header() {
         <Navbar.Toggle />
       </div>
       <Navbar.Collapse>
-        <Navbar.Link active={path === "/about"} as="div">
-          <Link to="/about">About</Link>
-        </Navbar.Link>
-        <Navbar.Link active={path === currentUser.company ? "/company" : "/cvs"} as="div">
-          <Link to={currentUser.company ? "/company" : "/cvs"}>
-            {currentUser.company ? "My Company" : "My CVs"}
-          </Link>
-        </Navbar.Link>
+        {currentUser && !currentUser.company ? (
+          <Navbar.Link active={path == "/cvs"} as="div">
+            <Link to="/cvs">CVs</Link>
+          </Navbar.Link>
+        ) : (
+          <Navbar.Link active={path == "/company"} as="div">
+            <Link to="/company">Company</Link>
+          </Navbar.Link>
+        )}
+        {/* // <Navbar.Link active={path === "/about"} as="div">
+        //   <Link to="/about">About</Link>
+        // </Navbar.Link> */}
       </Navbar.Collapse>
     </Navbar>
   );

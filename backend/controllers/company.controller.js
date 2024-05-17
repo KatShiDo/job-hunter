@@ -1,8 +1,9 @@
 import CompanyDto from "../dtos/company.dto.js";
 import Company from "../models/company.model.js";
+import User from "../models/user.model.js";
 import { errorHandler } from "../utils/error.js";
 
-export const create = (request, response, next) => {
+export const create = async (request, response, next) => {
   const { name, description, address, image } = request.body;
   if (!name || name == "") {
     return next(errorHandler(400, "Please provide all required fields"));
@@ -15,13 +16,15 @@ export const create = (request, response, next) => {
     description,
     address,
     image,
-    employees: [request.user.id],
   });
-  newCompany
-    .save()
-    .then((dbResponse) => {
-      const companyDto = new CompanyDto(dbResponse);
-      response.status(200).send(companyDto);
-    })
-    .catch((error) => next(error));
+  try {
+    const savedCompany = await newCompany.save();
+    const companyDto = new CompanyDto(savedCompany);
+    const user = await User.findById(request.user.id);
+    user.companyId = savedCompany._id;
+    user.save();
+    response.status(200).send(companyDto);
+  } catch (error) {
+    next(error);
+  }
 };

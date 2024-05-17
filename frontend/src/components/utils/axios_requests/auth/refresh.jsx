@@ -25,7 +25,7 @@ export default function refresh(dispatch) {
             dispatch(unsetSuccessMessage());
           });
       } else {
-        console.log(response.message);
+        console.log(response.data);
       }
     })
     .catch((error) => {

@@ -28,6 +28,7 @@ export const updateUser = (request, response, next) => {
     },
     { new: true }
   )
+    .populate("companyId")
     .then((dbResponse) => {
       const userDto = new UserDto(dbResponse);
       response.status(200).send(userDto);
@@ -43,7 +44,10 @@ export const deleteUser = (request, response, next) => {
   }
   User.findByIdAndDelete(request.params.userId)
     .then(() => {
-      response.status(200).send("User has been deleted");
+      response
+        .clearCookie("refreshToken")
+        .status(200)
+        .send("User has been deleted");
     })
     .catch((error) => {
       next(error);

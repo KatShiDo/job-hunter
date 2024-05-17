@@ -26,12 +26,6 @@ const userSchema = new mongoose.Schema(
       default:
         "https://catherineasquithgallery.com/uploads/posts/2021-03/1614570231_59-p-chernaya-golova-na-belom-fone-63.png",
     },
-    sessions: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "RefreshSession",
-      },
-    ],
     isAdmin: {
       type: Boolean,
       default: false,
@@ -41,15 +35,25 @@ const userSchema = new mongoose.Schema(
       required: false,
       ref: "Company",
     },
-    cvs: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Cv"
-      }
-    ]
   },
-  { timestamps: true, versionKey: false }
+  {
+    timestamps: true,
+    versionKey: false,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
 );
+
+userSchema.virtual("sessions", {
+  ref: "RefreshToken",
+  localField: "_id",
+  foreignField: "userId",
+});
+userSchema.virtual("cvs", {
+  ref: "Cv",
+  localField: "_id",
+  foreignField: "userId",
+});
 
 const User = mongoose.model("User", userSchema);
 

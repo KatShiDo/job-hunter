@@ -11,12 +11,22 @@ import {
 import { app } from "../firebase";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import create from "../components/utils/axios_requests/company/create";
 
 export default function CreateCompany() {
   const [file, setFile] = useState(null);
   const [imageUploadProgress, setImageUploadProgress] = useState(null);
   const [imageUploadError, setImageUploadError] = useState(null);
   const [formData, setFormData] = useState({});
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { accessToken } = useSelector((state) => state.user);
+
+  const handleChange = (event) => {
+    setFormData({ ...formData, [event.target.id]: event.target.value });
+  };
 
   const handleUploadImage = () => {
     if (!file) {
@@ -35,7 +45,9 @@ export default function CreateCompany() {
         setImageUploadProgress(progress.toFixed(0));
       },
       (error) => {
-        setImageUploadError("Could not upload image (File must be less than 2MB)");
+        setImageUploadError(
+          "Could not upload image (File must be less than 2MB)"
+        );
         setImageUploadProgress(null);
       },
       () => {
@@ -48,18 +60,30 @@ export default function CreateCompany() {
     );
   };
 
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    create(dispatch, navigate, setImageUploadError, formData, accessToken);
+  };
+
   return (
     <div className="p-3 max-w-3xl mx-auto min-h-screen">
       <h1 className="text-center text-3xl my-7 font-semibold">
         Create Company
       </h1>
-      <form className="flex flex-col gap-4">
+      <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
         <div className="flex gap-4 flex-col justify-between">
-          <TextInput type="text" placeholder="Name" required id="name" />
+          <TextInput
+            type="text"
+            placeholder="Name"
+            required
+            id="name"
+            onChange={handleChange}
+          />
           <TextInput
             type="text"
             placeholder="Address (optional)"
             id="address"
+            onChange={handleChange}
           />
         </div>
         <div className="flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3">
@@ -100,6 +124,9 @@ export default function CreateCompany() {
           theme="snow"
           placeholder="Write something..."
           className="h-72 mb-12"
+          onChange={(value) => {
+            setFormData({ ...formData, description: value });
+          }}
         />
         <Button type="submit" gradientDuoTone="purpleToPink">
           Create

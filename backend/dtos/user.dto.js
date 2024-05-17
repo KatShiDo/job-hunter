@@ -4,11 +4,13 @@ export default class UserDto {
   email;
   avatar;
   isAdmin;
+  company;
   constructor(dbResponse) {
     this.id = dbResponse._id;
     this.username = dbResponse.username;
     this.email = dbResponse.email;
     this.avatar = dbResponse.avatar;
     this.isAdmin = dbResponse.isAdmin;
+    this.company = dbResponse.companyId;
   }
 }

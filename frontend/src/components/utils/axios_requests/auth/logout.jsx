@@ -1,10 +1,10 @@
 import axios from "axios";
 import {
-  signoutSuccess,
   changeUserFailure,
 } from "../../../../redux/slices/userSlice";
 import { isExpired } from "./checkAccessToken";
 import refresh from "./refresh";
+import { purgeData } from "../../../../redux/store";
 
 export default function logout(dispatch, accessToken) {
   if (isExpired(accessToken)) {
@@ -19,7 +19,7 @@ export default function logout(dispatch, accessToken) {
     })
     .then((response) => {
       if (response.status == 200) {
-        dispatch(signoutSuccess());
+        purgeData();
       } else {
         return dispatch(changeUserFailure(response.data.message));
       }

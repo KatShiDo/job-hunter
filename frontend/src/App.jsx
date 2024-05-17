@@ -19,17 +19,18 @@ import { useDispatch } from "react-redux";
 import CreateCompany from "./pages/CreateCompany";
 import NotAuthRoute from "./components/private_routes/NotAuthRoute";
 import HasNotCompanyRoute from "./components/private_routes/HasNotCompanyRoute";
+import Cookies from "js-cookie";
 
 export default function App() {
   const dispatch = useDispatch();
   useEffect(() => {
     refresh(dispatch);
   }, []);
+
   return (
     <BrowserRouter>
       <Header />
       <Routes>
-        
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
 
@@ -39,7 +40,6 @@ export default function App() {
         </Route>
 
         <Route element={<AuthRoute />}>
-
           <Route element={<HasCompanyRoute />}>
             <Route path="/job/create" element={<CreateJob />} />
           </Route>

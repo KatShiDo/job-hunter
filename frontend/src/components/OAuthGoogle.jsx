@@ -27,7 +27,6 @@ export default function OAuthGoogle() {
         avatar: googleResponse.user.photoURL,
         fingerprint: fingerprint,
       };
-      console.log(userData);
       dispatch(changeUserStart());
       google(dispatch, navigate, userData);
     } catch (error) {

@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { compose, createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   currentUser: null,
@@ -23,6 +23,7 @@ const userSlice = createSlice({
         email: action.payload.email,
         avatar: action.payload.avatar,
         isAdmin: action.payload.isAdmin,
+        company: action.payload.company,
       };
       state.accessToken = action.payload.accessToken;
       state.loading = false;
@@ -35,6 +36,7 @@ const userSlice = createSlice({
         email: action.payload.email,
         avatar: action.payload.avatar,
         isAdmin: action.payload.isAdmin,
+        company: action.payload.company,
       };
       state.loading = false;
       state.error = null;
@@ -45,6 +47,8 @@ const userSlice = createSlice({
     },
     signoutSuccess: (state) => {
       state.currentUser = null;
+      state.accessToken = null;
+      state.success = null;
       state.loading = false;
       state.error = null;
     },
@@ -56,7 +60,10 @@ const userSlice = createSlice({
     },
     unsetSuccessMessage: (state) => {
       state.success = null;
-    }
+    },
+    setCompany: (state, action) => {
+      state.currentUser.company = action.payload;
+    },
   },
 });
 
@@ -68,6 +75,7 @@ export const {
   changeAccessToken,
   updateUserSuccess,
   setSuccessMessage,
-  unsetSuccessMessage
+  unsetSuccessMessage,
+  setCompany,
 } = userSlice.actions;
 export default userSlice.reducer;

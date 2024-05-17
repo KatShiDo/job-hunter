@@ -4,6 +4,7 @@ export default class AuthDto {
   email;
   avatar;
   isAdmin;
+  company;
   accessToken;
   constructor(dbResponse) {
     this.id = dbResponse._id;
@@ -11,5 +12,6 @@ export default class AuthDto {
     this.email = dbResponse.email;
     this.avatar = dbResponse.avatar;
     this.isAdmin = dbResponse.isAdmin;
+    this.company = dbResponse.companyId;
   }
 }

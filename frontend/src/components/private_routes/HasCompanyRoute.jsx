@@ -4,5 +4,5 @@ import { Outlet, Navigate } from "react-router-dom";
 
 export default function HasCompanyRoute() {
   const { currentUser } = useSelector((state) => state.user);
-  return currentUser && currentUser.company ? <Outlet /> : <Navigate to="/company/create" />;
+  return currentUser != null && currentUser.company ? <Outlet /> : <Navigate to="/company/create" />;
 }
