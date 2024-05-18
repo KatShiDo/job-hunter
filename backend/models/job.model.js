@@ -23,12 +23,16 @@ const jobSchema = new mongoose.Schema(
       type: Number,
       required: false,
     },
+    category: {
+      type: String,
+      default: "Uncategorized",
+    },
     companyId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Company",
     },
   },
-  { versionKey: false }
+  { versionKey: false, timestamps: true }
 );
 
 const Job = mongoose.model("Job", jobSchema);

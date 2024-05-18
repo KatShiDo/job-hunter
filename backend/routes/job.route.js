@@ -1,9 +1,10 @@
 import express from "express";
 import { verifyToken } from "../utils/verifyUser.js";
-import { createCompany } from "../controllers/company.controller.js";
+import { createJob } from "../controllers/job.controller.js";
 
 const router = express.Router();
 
-router.post("/", verifyToken, createCompany);
+router.post("/", verifyToken, createJob);
+router.get("/", getJobs);
 
 export default router;

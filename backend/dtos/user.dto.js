@@ -11,6 +11,5 @@ export default class UserDto {
     this.email = dbResponse.email;
     this.avatar = dbResponse.avatar;
     this.isAdmin = dbResponse.isAdmin;
-    this.company = dbResponse.companyId;
   }
 }

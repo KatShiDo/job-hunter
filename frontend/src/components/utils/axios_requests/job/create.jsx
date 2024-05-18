@@ -1,20 +1,13 @@
-import { setCompany } from "../../../../redux/slices/userSlice";
 import axios from "axios";
 import { isExpired } from "../auth/checkAccessToken";
 import refresh from "../auth/refresh";
 
-export default function create(
-  dispatch,
-  navigate,
-  setError,
-  formData,
-  accessToken
-) {
+export default function create(dispatch, navigate, setError, formData, accessToken) {
   if (!isExpired(accessToken)) {
     refresh(dispatch);
   }
   axios
-    .post("/api/company", formData, {
+    .post("/api/job", formData, {
       validateStatus: () => true,
       headers: {
         Authorization: "Bearer " + accessToken,
@@ -24,7 +17,6 @@ export default function create(
       if (response.status != 200) {
         return setError(response.message);
       }
-      dispatch(setCompany(response.data));
       setError(null);
       navigate("/dashboard?tab=company");
     })

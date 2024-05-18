@@ -6,6 +6,7 @@ import AuthDto from "../dtos/auth.dto.js";
 import RefreshToken from "../models/refreshToken.model.js";
 import RefreshDto from "../dtos/refresh.dto.js";
 import UserDto from "../dtos/user.dto.js";
+import CompanyDto from "../dtos/company.dto.js";
 
 const updateRefreshToken = async (userId, fingerprint, next) => {
   try {
@@ -24,9 +25,9 @@ const updateRefreshToken = async (userId, fingerprint, next) => {
 };
 
 const sendAuthSuccessResponse = (dbResponse, apiResponse, next) => {
-  console.log("DBRESPONSE", dbResponse);
+  const companyDto = new CompanyDto(dbResponse.companyId);
   const userDto = new UserDto(dbResponse);
-  console.log("USERDTO", userDto);
+  userDto.company = companyDto;
   apiResponse.status(200).send(userDto);
 };
 
@@ -50,6 +51,7 @@ const sendSignInSuccessResponse = (
   updateRefreshToken(dbResponse._id, fingerprint, next).then((refreshToken) => {
     // console.log("RefreshTokenxd", refreshToken);
     const authDto = new AuthDto(dbResponse);
+    authDto.company = new CompanyDto(dbResponse.companyId);
     authDto.accessToken = accessToken;
 
     // console.log("AuthDto", authDto);
