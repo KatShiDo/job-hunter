@@ -13,7 +13,7 @@ import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import create from "../components/utils/axios_requests/company/create";
+import createCompany from "../components/utils/axios_requests/company/createCompany";
 
 export default function CreateCompany() {
   const [file, setFile] = useState(null);
@@ -62,7 +62,7 @@ export default function CreateCompany() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    create(dispatch, navigate, setImageUploadError, formData, accessToken);
+    createCompany(dispatch, navigate, setImageUploadError, formData, accessToken);
   };
 
   return (

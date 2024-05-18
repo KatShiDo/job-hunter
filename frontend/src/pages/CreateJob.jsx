@@ -4,7 +4,7 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import create from "../components/utils/axios_requests/job/create";
+import createJob from "../components/utils/axios_requests/job/createJob";
 
 export default function CreateJob() {
   const [formData, setFormData] = useState({});
@@ -19,7 +19,7 @@ export default function CreateJob() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    create(dispatch, navigate, setCreateJobError, formData, accessToken);
+    createJob(dispatch, navigate, setCreateJobError, formData, accessToken);
   };
 
   return (

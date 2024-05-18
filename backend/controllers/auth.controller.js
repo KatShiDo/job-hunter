@@ -17,7 +17,6 @@ const updateRefreshToken = async (userId, fingerprint, next) => {
     await RefreshToken.deleteOne({ fingerprint }).exec();
     const newRefreshToken = new RefreshToken({ userId, fingerprint });
     const savedRefreshToken = await newRefreshToken.save();
-    // console.log("SAVED", savedRefreshToken);
     return savedRefreshToken;
   } catch (error) {
     next(error);
@@ -49,12 +48,10 @@ const sendSignInSuccessResponse = (
   );
 
   updateRefreshToken(dbResponse._id, fingerprint, next).then((refreshToken) => {
-    // console.log("RefreshTokenxd", refreshToken);
     const authDto = new AuthDto(dbResponse);
     authDto.company = new CompanyDto(dbResponse.companyId);
     authDto.accessToken = accessToken;
 
-    // console.log("AuthDto", authDto);
     apiResponse
       .status(200)
       .cookie("refreshToken", refreshToken._id, {
@@ -165,7 +162,6 @@ export const refresh = (request, response, next) => {
   }
   RefreshToken.findByIdAndDelete(refreshTokenId)
     .then((oldRefreshTokenResponse) => {
-      // console.log("DELETED", oldRefreshTokenResponse);
       if (oldRefreshTokenResponse.expirationDate < Date.now()) {
         return next(errorHandler(401, "Refresh token is expired"));
       }
@@ -178,7 +174,6 @@ export const refresh = (request, response, next) => {
         .save()
         .then((t) => t.populate("userId"))
         .then((newRefreshTokenResponse) => {
-          // console.log("SAVED_REFRESHED", newRefreshTokenResponse);
           const accessToken = jwt.sign(
             {
               id: newRefreshTokenResponse.userId._id,
@@ -208,7 +203,6 @@ export const jwtAuth = (request, response, next) => {
   User.findById(request.user.id)
     .populate("companyId")
     .then((dbResponse) => {
-      console.log(dbResponse);
       sendAuthSuccessResponse(dbResponse, response, next);
     })
     .catch((error) => {

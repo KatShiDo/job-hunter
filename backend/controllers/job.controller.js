@@ -29,7 +29,7 @@ export const createJob = async (request, response, next) => {
 
 export const getJobs = async (request, response, next) => {
   try {
-    const {
+    let {
       jobId,
       companyId,
       page,
@@ -42,15 +42,16 @@ export const getJobs = async (request, response, next) => {
       order,
       category,
     } = request.query;
-    size = size ? size : 10;
+    limit = limit ? limit : 10;
     page = page ? page : 0;
-    const startIndex = page * size;
+    const startIndex = page * limit;
     const sortDirection = order == "asc" ? 1 : -1;
+
     const jobs = await Job.find(
-      ...(companyId && { companyId }),
-      ...(category && { category }),
-      ...(jobId && { _id: jobId }),
-      ...(searchTerm && {
+      (companyId && { companyId }),
+      (category && { category }),
+      (jobId && { _id: jobId }),
+      (searchTerm && {
         $or: [
           { title: { $regex: searchTerm, $options: "i" } },
           { description: { $regex: searchTerm, $options: "i" } },

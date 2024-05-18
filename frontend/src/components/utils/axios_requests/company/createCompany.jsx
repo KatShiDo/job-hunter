@@ -3,7 +3,7 @@ import axios from "axios";
 import { isExpired } from "../auth/checkAccessToken";
 import refresh from "../auth/refresh";
 
-export default function create(
+export default function createCompany(
   dispatch,
   navigate,
   setError,

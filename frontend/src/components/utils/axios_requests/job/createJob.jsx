@@ -2,7 +2,7 @@ import axios from "axios";
 import { isExpired } from "../auth/checkAccessToken";
 import refresh from "../auth/refresh";
 
-export default function create(dispatch, navigate, setError, formData, accessToken) {
+export default function createJob(dispatch, navigate, setError, formData, accessToken) {
   if (!isExpired(accessToken)) {
     refresh(dispatch);
   }
