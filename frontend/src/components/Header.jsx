@@ -75,7 +75,7 @@ export default function Header() {
           </Navbar.Link>
         ) : (
           <Navbar.Link active={path == "/company"} as="div">
-            <Link to="/company">Company</Link>
+            <Link to="/dashboard?tab=company">Company</Link>
           </Navbar.Link>
         )}
         {/* // <Navbar.Link active={path === "/about"} as="div">

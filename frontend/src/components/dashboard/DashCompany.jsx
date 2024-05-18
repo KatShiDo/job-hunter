@@ -8,23 +8,39 @@ export default function DashCompany() {
   const { currentUser } = useSelector((state) => state.user);
   const [companyJobs, setCompanyJobs] = useState([]);
   const [error, setError] = useState(null);
-  console.log(companyJobs);
+  const [showMore, setShowMore] = useState(true);
+  let page = 1;
+
   useEffect(() => {
-    getJobs(setCompanyJobs, setError, {
+    getJobs(setCompanyJobs, setError, setShowMore, {
       companyId: currentUser.company.id,
     });
   }, [currentUser.company.id]);
+
+  const setAdditional = (jobs) => {
+    setCompanyJobs((prev) => [...prev, ...jobs]);
+  }
+
+  const handleShowMore = () => {
+    getJobs(setAdditional, setError, setShowMore, {
+      companyId: currentUser.company.id,
+      page
+    });
+    setShowMore(false);
+    page++;
+  };
+
   return (
-    <div className="table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500 ">
+    <div className="w-full table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500 ">
       <h1 className="my-7 text-center font-semibold text-3xl">Company</h1>
       <Link to="/job/create">
         <Button gradientDuoTone="purpleToBlue">Create Job</Button>
       </Link>
       {companyJobs.length > 0 ? (
-        <>
+        <div>
           <Table hoverable className="shadow-md">
             <Table.Head>
-              <Table.HeadCell>Date updated</Table.HeadCell>
+              <Table.HeadCell>Last update</Table.HeadCell>
               <Table.HeadCell>Title</Table.HeadCell>
               <Table.HeadCell>Category</Table.HeadCell>
               <Table.HeadCell>Delete</Table.HeadCell>
@@ -33,7 +49,7 @@ export default function DashCompany() {
               </Table.HeadCell>
             </Table.Head>
             {companyJobs.map((job) => (
-              <Table.Body className="divide-y">
+              <Table.Body key={job.id} className="divide-y">
                 <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                   <Table.Cell>
                     {new Date(job.updatedAt).toLocaleDateString()}
@@ -64,7 +80,15 @@ export default function DashCompany() {
               </Table.Body>
             ))}
           </Table>
-        </>
+          {showMore && (
+            <button
+              onClick={handleShowMore}
+              className="w-full text-teal-500 self-center text-sm py-7"
+            >
+              Show more
+            </button>
+          )}
+        </div>
       ) : (
         <p>There is no jobs</p>
       )}

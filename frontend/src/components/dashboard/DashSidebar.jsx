@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 export default function DashSidebar() {
   const location = useLocation();
   const dispatch = useDispatch();
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser, accessToken } = useSelector((state) => state.user);
   const [tab, setTab] = useState("");
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -19,7 +19,7 @@ export default function DashSidebar() {
   }, [location.search]);
 
   const handleLogout = () => {
-    logout(dispatch);
+    logout(dispatch, accessToken);
   };
 
   return (
