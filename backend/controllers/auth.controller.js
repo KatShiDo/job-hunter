@@ -9,6 +9,8 @@ import UserDto from "../dtos/user.dto.js";
 import CompanyDto from "../dtos/company.dto.js";
 
 const updateRefreshToken = async (userId, fingerprint, next) => {
+  console.log("USERID", userId);
+  console.log("FINGERPRINT", fingerprint);
   try {
     const refreshTokens = await RefreshToken.find({ userId });
     if (refreshTokens.length >= 5) {
@@ -24,10 +26,17 @@ const updateRefreshToken = async (userId, fingerprint, next) => {
 };
 
 const sendAuthSuccessResponse = (dbResponse, apiResponse, next) => {
-  const companyDto = new CompanyDto(dbResponse.companyId);
-  const userDto = new UserDto(dbResponse);
-  userDto.company = companyDto;
-  apiResponse.status(200).send(userDto);
+  try {
+    console.log("DB RESPONSE", dbResponse);
+    const userDto = new UserDto(dbResponse);
+    if (dbResponse.companyId) {
+      const companyDto = new CompanyDto(dbResponse.companyId);
+      userDto.company = companyDto;
+    }
+    apiResponse.status(200).send(userDto);
+  } catch (error) {
+    next(error);
+  }
 };
 
 const sendSignInSuccessResponse = (
@@ -49,7 +58,11 @@ const sendSignInSuccessResponse = (
 
   updateRefreshToken(dbResponse._id, fingerprint, next).then((refreshToken) => {
     const authDto = new AuthDto(dbResponse);
-    authDto.company = new CompanyDto(dbResponse.companyId);
+    // console.log("DBRESPONE" + dbResponse);
+    if (dbResponse.companyId) {
+      authDto.company = new CompanyDto(dbResponse.companyId);
+    }
+    // authDto.company = new CompanyDto(dbResponse.companyId);
     authDto.accessToken = accessToken;
 
     apiResponse
@@ -116,10 +129,12 @@ export const login = (request, response, next) => {
 
 export const google = (request, response, next) => {
   const { username, email, avatar, fingerprint } = request.body;
+  // console.log(request.body);
   User.findOne({ email })
     .populate("companyId")
     .then((validUser) => {
       if (validUser) {
+        // console.log("VALID USER" +  validUser);
         sendSignInSuccessResponse(validUser, response, fingerprint, next);
       } else {
         const randomPassword =
@@ -135,7 +150,9 @@ export const google = (request, response, next) => {
           avatar: avatar,
         });
         newUser.save().then((dbResponse) => {
+          // console.log("XD")
           sendSignInSuccessResponse(dbResponse, response, fingerprint, next);
+          // console.log("XD")
         });
       }
     })
@@ -200,9 +217,11 @@ export const refresh = (request, response, next) => {
 };
 
 export const jwtAuth = (request, response, next) => {
+  console.log("JWT AUTH", request.user);
   User.findById(request.user.id)
     .populate("companyId")
     .then((dbResponse) => {
+      // console.log("XD")
       sendAuthSuccessResponse(dbResponse, response, next);
     })
     .catch((error) => {

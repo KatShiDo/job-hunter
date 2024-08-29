@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: false,
       default:
-        "https://catherineasquithgallery.com/uploads/posts/2021-03/1614570231_59-p-chernaya-golova-na-belom-fone-63.png",
+        "https://www.pngmart.com/files/21/Account-User-PNG-Photo.png",
     },
     isAdmin: {
       type: Boolean,

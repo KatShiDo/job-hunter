@@ -4,7 +4,8 @@ import User from "../models/user.model.js";
 import { errorHandler } from "../utils/error.js";
 
 export const createCompany = async (request, response, next) => {
-  const { name, description, address, image } = request.body;
+  const { name, description, address } = request.body;
+  let image = request.body.image;
   if (!name || name == "") {
     return next(errorHandler(400, "Please provide all required fields"));
   }

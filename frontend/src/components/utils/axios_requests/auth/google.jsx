@@ -5,6 +5,7 @@ import {
 } from "../../../../redux/slices/userSlice";
 
 export default function google(dispatch, navigate, userData) {
+  console.log(userData);
   axios
     .post("/api/auth/google", userData, {
       validateStatus: () => true,
@@ -14,6 +15,7 @@ export default function google(dispatch, navigate, userData) {
         dispatch(authUserSuccess(apiResponse.data));
         return navigate("/");
       } else {
+        console.log(apiResponse);
         return dispatch(changeUserFailure(apiResponse.data.message));
       }
     });

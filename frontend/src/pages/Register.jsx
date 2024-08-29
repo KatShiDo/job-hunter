@@ -12,6 +12,7 @@ import SubmitButton from "../components/SubmitButton";
 import OAuthGoogle from "../components/OAuthGoogle";
 import register from "../components/utils/axios_requests/auth/register";
 import { useNavigate } from "react-router-dom";
+import { getFingerprint } from "../components/utils/getFingerprint";
 
 export default function Register() {
   const [formData, setFormData] = useState({});
@@ -29,8 +30,14 @@ export default function Register() {
     if (!formData.username || !formData.email || !formData.password) {
       return dispatch(changeUserFailure("Please fill out all fields"));
     }
-    dispatch(changeUserStart());
-    register(dispatch, navigate, formData);
+    getFingerprint().then((fingerprint) => {
+      console.log(fingerprint);
+      setFormData({...formData, fingerprint: fingerprint });
+      formData.fingerprint = fingerprint;
+      console.log(formData);
+      dispatch(changeUserStart());
+      register(dispatch, navigate, formData);
+    });
   };
 
   return (

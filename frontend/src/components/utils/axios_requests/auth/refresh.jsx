@@ -11,6 +11,7 @@ export default function refresh(dispatch) {
       validateStatus: () => true,
     })
     .then((response) => {
+      console.log("RESPONSE FROM REFRESH", response);
       if (response.status == 200) {
         dispatch(changeAccessToken(response.data));
         axios
